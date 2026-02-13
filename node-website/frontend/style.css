@@ -1,0 +1,25 @@
+body {
+  background: linear-gradient(to right, #141e30, #243b55);
+  font-family: Arial, sans-serif;
+  color: white;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  background: rgba(0, 0, 0, 0.5);
+  padding: 30px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+button {
+  padding: 10px 20px;
+  background: #00c6ff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  color: black;
+}
