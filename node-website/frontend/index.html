@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Nginx + Node.js Website</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Nginx + Node.js</h1>
+    <p id="msg">Loading...</p>
+    <button onclick="loadMessage()">Get Message</button>
+  </div>
+
+  <script>
+    async function loadMessage() {
+      const res = await fetch("/api/message");
+      const data = await res.json();
+      document.getElementById("msg").innerText = data.message;
+    }
+  </script>
+</body>
+</html>
