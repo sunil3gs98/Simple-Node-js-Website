@@ -37,60 +37,61 @@ Nginx acts as the public-facing web server on port **80**, while the Node.js app
 cd backend
 npm install
 npm start
-----------------
- 2️⃣ Install and Start Nginx
-
-sudo apt update
-sudo apt install nginx -y
-sudo systemctl start nginx
-
-Verify Nginx is running:
-  sudo systemctl status nginx
-
---------------
-
-3️⃣ Configure Nginx as a Reverse Proxy
-
+# Verify Nginx is running:
+sudo systemctl status nginx
+```
+### 3️⃣ Configure Nginx as a Reverse Proxy
+Create the configuration file:
+```bash
 sudo nano /etc/nginx/sites-available/nodeapp
+```
+Add the following configuration to the file to forward port 80 to 3000:
+```nginx
+server {
+    listen 80;
 
-Add the Nginix file coniguartion to nodeapp
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+```
 
-Enable the configuration
-  sudo ln -s /etc/nginx/sites-available/nodeapp /etc/nginx/sites-enabled/
-  sudo nginx -t
-  sudo systemctl reload nginx
----------------------
-🌐 How to Access the Website
+Enable the configuration and reload the service:
+```bash
+sudo ln -s /etc/nginx/sites-available/nodeapp /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl reload nginx
+``` 
 
-Via Reverse Proxy
-  http://localhost
-Direct Backend Access (Node.js)
-  http://localhost:3000
-------------------------------
-🔁 How to Verify Reverse Proxy Is Working
+---
 
-✅ Test 1: Stop Nginx
-  sudo systemctl stop nginx
-Test access:
-curl http://localhost
-Expected result:
-Connection refused
-✔ Confirms Nginx was serving traffic on port 80.
+## 🌐 How to Access the Website
 
-✅ Test 2: Backend Still Running
-curl http://localhost:3000
-✔ Backend should still respond, proving Node.js is independent of Nginx.
+* **Via Reverse Proxy**: `http://localhost`.
+* **Direct Backend Access (Node.js)**: `http://localhost:3000`.
 
-✅ Test 3: Check Nginx Response Headers
-Start Nginx again:
-sudo systemctl start nginx
-Run:
-curl -I http://localhost
-Expected output includes:
-Server: nginx
-✔ Confirms requests are passing through Nginx.
+---
 
-✅ Test 4: Check Nginx Access Logs
-sudo tail -f /var/log/nginx/access.log
-✔ Requests appearing in the logs confirm reverse proxy usage.
+## 🔁 How to Verify Reverse Proxy Is Working
 
+* **✅ Test 1: Stop Nginx**
+    * `sudo systemctl stop nginx`.
+    * Test access via `curl http://localhost`.
+    * **Expected result**: Connection refused (Confirms Nginx was serving traffic on port 80).
+* **✅ Test 2: Backend Still Running**
+    * `curl http://localhost:3000`.
+    * **Expected result**: Backend responds (Proving Node.js is independent of Nginx).
+* **✅ Test 3: Check Nginx Response Headers**
+    * Restart Nginx: `sudo systemctl start nginx`.
+    * Run: `curl -I http://localhost`.
+    * **Expected result**: Header includes `Server: nginx`.
+* **✅ Test 4: Check Nginx Access Logs**
+    * `sudo tail -f /var/log/nginx/access.log`.
+    * **Expected result**: Incoming requests appear in logs.
+
+---
